@@ -4,9 +4,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="icon" href="icon.png">
-<title>따라 그림 · DRAWLLOW</title>
+<title>drawllow</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="따라 그림">
+<meta name="apple-mobile-web-app-title" content="drawllow">
 <meta name="theme-color" content="#1F2023">
 <!-- 2026-11-20 구글 애널리틱스 (Google 태그 GTM-5LK9G9TZ, 속성 '따라 그림', 스트림 '따라 그림 웹앱') -->
 <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-5LK9G9TZ"></script>
@@ -556,14 +556,14 @@ const DRAW = window.DRAW || (window.DRAW = {});   // 번호 → {data, img, vo_k
 
 let D = null, G = [], N = 0, NO = 0, stageFirst = [], stageCount = [];
 const L = {
- ko:{name:'달리는 사람', appName:'따라 그림', brandSub:'붓질 하나씩 따라 그려요', prepT:'시작 전 준비 : 브러시 설정', prepS:'처음 한 번만 · 약 2분', done:'완료 ✓', doIt:'하기 ›',
+ ko:{name:'달리는 사람', appName:'drawllow', brandSub:'붓질 하나씩 따라 그려요', prepT:'시작 전 준비 : 브러시 설정', prepS:'처음 한 번만 · 약 2분', done:'완료 ✓', doIt:'하기 ›',
    cont:n=>`이어서 ${n}번째`, start:'시작하기', meta:(n,k)=>`붓질 ${n}번 · ${k === 1 ? '' : (k || 5) + '단계 · '}약 25분 · 무료`, more:'다음 그림', unlock:'▶ 광고 보고 열기', adMsg:'시안: 여기서 15초 광고가 나와요',
    setupT:'시작 전 준비', setupH:'한 번만 해 두면 모든 그림에 써요', setupL:'그림마다 다시 설정하지 않아요. 바꾸고 싶을 때는 그리기 화면 위쪽 ‘브러시’를 누르면 언제든 다시 볼 수 있어요.',
    brushSub:'Inking(잉크) 묶음 · 붓 각도 설정', allSet:'준비 끝, 그리기 시작', later:'나중에 하고 바로 그리기', brush:'브러시', stage:(n,s)=>`${n}단계 · ${s}`, auto:'자동 듣기', autoS:'자동', finish:'완성! 목록으로', nextA:'다음 붓질', doneMsg:'— 완성이에요! 정말 멋져요.', loading:'그림 불러오는 중…', loadFail:'불러오지 못했어요. 인터넷 연결을 확인해 주세요.', openIt:'열기 ›',
    adT:'Bulky Canvas 원화 보러 가기', adS:'예시 광고 · 실제로는 구글 광고가 들어가요', adC:'열기', speaking:'멈춤', listen:'듣기', allv:'자동재생', rst:'처음부터', allvStop:'멈춤', autoOn:'자동 켜짐', tts:'ko-KR',
    prep:[['brush','Ink roll 브러시 고르기','프로크리에이트 브러시 목록에서 Inking(잉크) 묶음을 누르고 그 안의 Ink roll을 골라요. 모든 그림을 이 브러시 하나로 그려요.<br>※ 기기 언어에 따라 묶음·브러시 이름이 다르게 보일 수 있어요.'],
      ['angle','붓 각도 설정','① 고른 Ink roll을 한 번 더 눌러 브러시 설정 창(브러시 스튜디오)을 열어요.<br>② 왼쪽 메뉴에서 Shape(모양)를 눌러요.<br>③ <b>Azimuth and barrel roll</b>에 체크해요.<br>④ 오른쪽 위 완료(Done)를 눌러 닫아요.<br>이제 펜슬을 기울이는 방향으로 붓 끝이 돌아가서, 같은 붓으로 굵은 면과 얇은 선을 다 낼 수 있어요.']]},   // 2026-11-20 작가: '바탕을 회색으로' 단계 뺌
- en:{name:'Running Figure', appName:'DRAWLLOW', brandSub:'Paint along, one stroke at a time', prepT:'Before you start: Brush setup', prepS:'One time only · about 2 min', done:'Done ✓', doIt:'Set up ›',
+ en:{name:'Running Figure', appName:'drawllow', brandSub:'Paint along, one stroke at a time', prepT:'Before you start: Brush setup', prepS:'One time only · about 2 min', done:'Done ✓', doIt:'Set up ›',
    cont:n=>`Continue at ${n}`, start:'Start', meta:(n,k)=>`${n} strokes · ${k === 1 ? '' : (k || 5) + ' stages · '}~25 min · Free`, more:'More drawings', unlock:'▶ Watch an ad to unlock', adMsg:'Mockup: a 15-second ad plays here',
    setupT:'Before you start', setupH:'Set it once, use it for every drawing', setupL:'You won’t need to set this up again for each drawing. To check it later, tap ‘Brush’ at the top of the painting screen.',
    brushSub:'Inking set · Brush angle setup', allSet:'All set — start painting', later:'Skip for now and start', brush:'Brush', stage:(n,s)=>`Stage ${n} · ${s}`, auto:'Auto-play', autoS:'Auto', finish:'Done! Back to list', nextA:'Next stroke', doneMsg:'— You did it! Beautiful work.', loading:'Loading the drawing…', loadFail:'Couldn’t load. Please check your connection.', openIt:'Open ›',
