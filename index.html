@@ -482,6 +482,10 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}   /* �
 .iggrid .lock::after{content:'';position:absolute;inset:auto 0 0 0;height:55%;background:linear-gradient(transparent,rgba(0,0,0,.6));pointer-events:none}
 .iggrid .t{position:absolute;left:8px;right:8px;bottom:8px;z-index:1;color:#fff;font-size:12.5px;font-weight:600;line-height:1.25;text-align:left}
 .iggrid .t small{display:flex;align-items:center;gap:5px;font-size:10.5px;font-weight:500;opacity:.85;margin-top:3px}
+.iggrid .dn{position:absolute;top:6px;right:6px;z-index:2;display:flex;align-items:center;gap:3px;padding:3px 8px 3px 6px;border-radius:999px;background:var(--accent);color:#fff;font-size:10.5px;font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.vtoast{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:20;max-width:78%;padding:12px 18px;border-radius:14px;background:rgba(20,22,25,.82);color:#fff;font-size:14px;line-height:1.45;text-align:center;transition:opacity .5s;pointer-events:none}
+.vtoast.out{opacity:0}
+.pill.novo{opacity:.45}
 .iggrid .t .dd{display:inline-flex;gap:2px}.iggrid .t .dd i{width:4.5px;height:4.5px;border-radius:50%;border:1px solid rgba(255,255,255,.6)}.iggrid .t .dd i.f{background:var(--accent);border-color:var(--accent)}
 .iggrid .k{position:absolute;right:7px;top:7px;z-index:1;color:#fff;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6))}
 .iggrid .lock.ad .admsg{font-size:11px;padding:8px}
@@ -574,7 +578,8 @@ body{padding:0!important;background:var(--phone);-webkit-text-size-adjust:100%}
 .iggrid{margin:0;gap:6px}
 .iggrid .lock{border-radius:12px;background:var(--surface)}
 .iggrid .lock img{filter:none}
-.iggrid .lock::after{height:50%;background:linear-gradient(transparent,rgba(0,0,0,.45))}
+.iggrid .lock::after{height:62%;background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.28) 45%,rgba(0,0,0,.72))}
+.iggrid .t{text-shadow:0 1px 3px rgba(0,0,0,.55)}   /* 2026-11-24: 흰 바탕 그림에서도 제목이 읽히게 */
 .iggrid .k{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.9);color:var(--ink);display:flex;align-items:center;justify-content:center;filter:none;right:6px;top:6px}
 .iggrid .k svg{width:12px;height:12px}
 /* 메뉴·안내 창 */
@@ -659,14 +664,14 @@ function setLang(l){ track('lang_change', {to: l}); lang = l; try { localStorage
 function adText(){ const a = document.getElementById('adT'); if (!a) return; a.textContent = tr('adT'); document.getElementById('adS').textContent = tr('adS'); document.getElementById('adC').textContent = tr('adC'); }
 const $s = document.getElementById('screen');
 const pad = n => String(n).padStart(3,'0');
-let cur = 1, hl = false, view = 'home', ready = false, checks = {}, autoSay = false, unlocked = {};
+let cur = 1, hl = false, view = 'home', ready = false, checks = {}, autoSay = false, unlocked = {}, done = {};   // done: 끝까지 본 그림 (2026-11-24 작가: 목록에 완료 표시)
 const prog = {}, progN = {};
 const canSay = typeof window !== 'undefined' && 'speechSynthesis' in window;
-try { const v = JSON.parse(localStorage.getItem('app') || '{}'); ready = !!v.ready; checks = v.checks || {}; autoSay = !!v.autoSay; unlocked = v.unlocked || {}; Object.assign(prog, v.prog || {}); Object.assign(progN, v.progN || {}); } catch(e) {}
+try { const v = JSON.parse(localStorage.getItem('app') || '{}'); ready = !!v.ready; checks = v.checks || {}; autoSay = !!v.autoSay; unlocked = v.unlocked || {}; done = v.done || {}; Object.assign(prog, v.prog || {}); Object.assign(progN, v.progN || {}); } catch(e) {}
 // 2026-11-19 데이터 꼬임 정리: 그림이 다시 만들어져 화면 수가 바뀌었으면(또는 예전 기록이면) 이어보기 위치를 처음으로 — 옛 위치가 엉뚱한 화면을 가리키지 않게
 CAT.forEach(c => { if (progN[c.no] !== c.count) { delete prog[c.no]; progN[c.no] = c.count; } });
 Object.keys(prog).forEach(k => { if (!CAT.some(c => c.no === +k)) delete prog[k]; });   // 앱에서 뺀 그림의 기록은 지움
-const save = () => { if (NO) prog[NO] = cur; try { localStorage.setItem('app', JSON.stringify({ready, checks, autoSay, unlocked, prog, progN})); } catch(e) {} };
+const save = () => { if (NO) { prog[NO] = cur; if (cur === N && N > 1) done[NO] = true; } try { localStorage.setItem('app', JSON.stringify({ready, checks, autoSay, unlocked, prog, progN, done})); } catch(e) {} };
 const loaded = {};
 // 그림 파일은 받아 온 만큼 onp(받은 바이트, 전체 바이트)로 알려 준다 (전체 크기는 build.py가 CAT.size에 적어 둠).
 function loadJS(src, onp, total){ return loaded[src] || (loaded[src] = (async () => {
@@ -711,6 +716,11 @@ async function openDrawing(no){
 }
 const IM = f => DRAW[NO].img[f];
 const VOX = f => ((DRAW[NO] || {})['vo_' + lang] || {})[f];
+// 2026-11-24 작가: 한 번도 그림을 안 연 사람에게는 '이어 보기'를 안 보여 줌
+const seenAny = () => { try { return CAT.some(c => c.no === +(localStorage.getItem('last') || 0)); } catch(e) { return false; } };
+// 2026-11-24 작가: 처음 화면의 '준비 끝, 그리기 시작'은 실제로 그림을 연다 (본 그림이 있으면 그 그림, 없으면 목록 첫 그림)
+const firstNo = () => CAT.slice().sort((a, b) => (a.level || 9) - (b.level || 9) || (a.order ?? a.no) - (b.order ?? b.no))[0].no;
+const startDraw = () => openDrawing(seenAny() ? lastNo() : firstNo());
 function lastNo(){ let n = 0; try { n = +(localStorage.getItem('last') || 0); } catch(e) {}
   return CAT.some(c => c.no === n) ? n : (NO || CAT[0].no); }   // 앱에서 뺀 그림(예: No.2)을 기억하고 있으면 첫 그림으로 — 목록에 같은 그림이 두 번 뜨지 않게
 const isOpen = c => true;   // 2026-11-24 작가 요청: 자물쇠 표시 없이 모든 그림 바로 열기 (예전: 첫 그림만 열림, 나머지는 광고 보고 열기)
@@ -775,19 +785,19 @@ function home(){
       <span class="st">${PREP_().filter(p=>checks[p[0]]).length===PREP_().length?tr('done'):tr('doIt')}</span></button>
     <div class="hl3" role="tablist" aria-label="${lang === 'ko' ? '난이도' : 'Level'}">
       <button type="button" role="tab" data-lv="0" class="${lvSel === 0 ? 'on' : ''}" aria-selected="${lvSel === 0}"><span class="ring"><span><b>ALL</b></span></span>${lang === 'ko' ? '전체' : 'All'}</button>
-      <button type="button" class="contb" id="open1" data-no="${lc.no}" aria-label="${(lp > 1 ? tr('cont')(lp) : tr('start'))} · ${(lc.name_en || lc.name)}"><span class="ring"><span><img src="${lc.hero}" alt=""><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></span>${lang === 'ko' ? '이어 보기' : 'Continue'}</button>
+      ${seenAny() ? `<button type="button" class="contb" id="open1" data-no="${lc.no}" aria-label="${(lp > 1 ? tr('cont')(lp) : tr('start'))} · ${(lc.name_en || lc.name)}"><span class="ring"><span><img src="${lc.hero}" alt=""><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span></span>${lang === 'ko' ? '이어 보기' : 'Continue'}</button>` : ''}
       ${LVF.map(n => `<button type="button" role="tab" data-lv="${n}" class="${lvSel === n ? 'on' : ''}${has(n) ? '' : ' off'}" aria-selected="${lvSel === n}" ${has(n) ? '' : 'disabled'}><span class="ring"><span><span class="dd">${dotsHtml(n)}</span></span></span>${LVN[lang][n-1]}</button>`).join('')}
     </div>
     <div class="iggrid">
       ${list.map(c => `
       <button type="button" class="lock ${isOpen(c) ? 'open' : ''}" data-no="${c.no}" aria-label="${(c.name_en || c.name)}${isOpen(c) ? '' : ' · ' + tr('unlock')}"><img src="${c.hero}" alt="">
-      ${isOpen(c) ? '' : `<span class="k" aria-hidden="true">${lockSvg}</span>`}
+      ${isOpen(c) ? '' : `<span class="k" aria-hidden="true">${lockSvg}</span>`}${done[c.no] ? `<span class="dn" aria-label="${lang === 'ko' ? '완료' : 'Done'}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>${lang === 'ko' ? '완료' : 'Done'}</span>` : ''}
       <span class="t">${(c.name_en || c.name)}<small><span class="dd">${dotsHtml(c.level)}</span>${c.count} strokes</small></span><span class="admsg"></span></button>`).join('')}
     </div>
   </div>`;
-  document.getElementById('open1').onclick = () => openDrawing(+document.getElementById('open1').dataset.no);
+  { const o1 = document.getElementById('open1'); if (o1) o1.onclick = () => openDrawing(+o1.dataset.no); }
   document.getElementById('menub').onclick = () => openMenu(lc, lp);
-  document.getElementById('prepbtn').onclick = () => { track('setup_open', {from: 'home'}); setup(home); };
+  document.getElementById('prepbtn').onclick = () => { track('setup_open', {from: 'home'}); setup(startDraw); };
   $s.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => setLang(b.dataset.lang));
   $s.querySelectorAll('[data-lv]').forEach(b => b.onclick = () => { lvSel = +b.dataset.lv; try { localStorage.setItem('lvsel', lvSel); } catch(e) {} home(); });
   { const hl = $s.querySelector('.hl3'), on = hl && hl.querySelector('.on'); if (on && on.offsetLeft + on.offsetWidth > hl.clientWidth) hl.scrollLeft = on.offsetLeft - 120; }
@@ -822,7 +832,7 @@ function openMenu(lc, lp){
   d.innerHTML = `<div class="drbg" id="drbg"></div>
     <nav class="drp" aria-label="${ko ? '메뉴' : 'Menu'}">
       <div class="drh"><b>${tr('appName')}</b><button type="button" class="drx" id="drx" aria-label="${ko ? '닫기' : 'Close'}">${ic('<path d="M6 6l12 12M18 6L6 18"/>')}</button></div>
-      ${it('m_cont', ic('<circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l5.5-3.5z" fill="currentColor"/>'), ko ? '이어 보기' : 'Continue', `${(lc.name_en || lc.name)} · ${lp > 1 ? (ko ? `${lp}번째 화면부터` : `from step ${lp}`) : (ko ? '처음부터' : 'from the start')}`)}
+      ${seenAny() ? it('m_cont', ic('<circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l5.5-3.5z" fill="currentColor"/>'), ko ? '이어 보기' : 'Continue', `${(lc.name_en || lc.name)} · ${lp > 1 ? (ko ? `${lp}번째 화면부터` : `from step ${lp}`) : (ko ? '처음부터' : 'from the start')}`) : ''}
       ${it('m_prep', ic('<path d="M4 20l6-6"/><path d="M14.5 4.5l5 5-8 8-5-5z"/>'), ko ? '시작 전 준비 · 브러시 설정' : 'Before you start · Brush setup', `${nPrep} / ${PREP_().length} ${ko ? '완료' : 'done'}`)}
       ${it('m_all', ic('<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>'), ko ? '모든 그림 보기' : 'All drawings', `${CAT.length}${ko ? '개' : ''}`)}
       ${it('m_how', ic('<circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 1 1 3.4 2.4c-.6.3-1 .8-1 1.5v.5"/><circle cx="12" cy="17" r=".6" fill="currentColor"/>'), ko ? '사용법' : 'How to use', ko ? '화면 넘기기 · 자동재생 · 듣기' : 'Swipe · Auto-play · Listen')}
@@ -838,8 +848,8 @@ function openMenu(lc, lp){
   void d.offsetWidth; d.classList.add('on');
   const close = () => { d.classList.remove('on'); setTimeout(() => d.remove(), 220); };
   d.querySelector('#drbg').onclick = close; d.querySelector('#drx').onclick = close;
-  d.querySelector('#m_cont').onclick = () => { d.remove(); openDrawing(lc.no); };
-  d.querySelector('#m_prep').onclick = () => { d.remove(); setup(home); };
+  { const mc = d.querySelector('#m_cont'); if (mc) mc.onclick = () => { d.remove(); openDrawing(lc.no); }; }
+  d.querySelector('#m_prep').onclick = () => { d.remove(); setup(startDraw); };
   d.querySelector('#m_all').onclick = () => { lvSel = 0; try { localStorage.setItem('lvsel', 0); } catch(e) {} d.remove(); home(); };
   d.querySelector('#m_how').onclick = () => { track('help_open'); d.querySelector('#drhow').hidden = false; };
   d.querySelector('#howx').onclick = () => { d.querySelector('#drhow').hidden = true; };
@@ -874,7 +884,9 @@ function tut(){
   const ab = document.getElementById('autobtn');
   // 2026-11-18 작가 요청: '듣기'와 '자동'이 헷갈림 → 헤드셋 '듣기' 하나. 눌려 있는 동안 목소리가 나온다 (넘길 때마다 그 화면 설명을 읽음)
   const autoUI = () => { ab.setAttribute('aria-pressed', autoSay); ab.classList.toggle('on', autoSay); ab.setAttribute('aria-label', (lang === 'ko' ? '목소리 ' : 'Voice ') + (autoSay ? (lang === 'ko' ? '켜짐' : 'on') : (lang === 'ko' ? '꺼짐' : 'off'))); document.getElementById('autotx').textContent = tr('listen'); };
-  ab.onclick = () => { track('listen_toggle', {on: !autoSay, drawing_no: NO}); autoSay = !autoSay; save(); autoUI(); if (autoSay) say(); else hush(); };
+  ab.classList.toggle('novo', !hasVo());
+  ab.onclick = () => { if (!hasVo()) { if (autoSay) { autoSay = false; save(); autoUI(); } vtoast(lang === 'ko' ? '이 그림은 작가 목소리를 준비하고 있어요.' : 'The artist’s voice for this drawing is coming soon.'); return; }
+    track('listen_toggle', {on: !autoSay, drawing_no: NO}); autoSay = !autoSay; save(); autoUI(); if (autoSay) say(); else hush(); };
   autoUI();
   document.getElementById('prev').onclick = () => go(cur-1);
   document.getElementById('next').onclick = () => { if (cur === N) { hush(); home(); } else go(cur+1); };
@@ -1151,9 +1163,13 @@ function sayState(on){ const b = document.getElementById('say'); if (!b) return;
 // 이번 화면에서 들려줄 말 (단계 첫 화면이면 단계 설명 + 붓질 설명). 설명이 빈 화면은 말 없이 그림만.
 // 2026-11-18 작가 요청: 소제목(위쪽 단계 이름·설명)과 목소리가 겹치지 않게 — 소제목은 글로만 보여 주고, 목소리는 아래 문장만 읽는다.
 function sayText(){ const s = G[cur-1]; return (s['note'+SUF()] || '').trim(); }
+// 2026-11-24 작가: 작가 목소리가 아직 없는 그림은 기계 목소리로 읽지 않고 '준비 중' 안내만
+const hasVo = () => !!(((CAT.find(c => c.no === NO) || {}).vv) || {})[lang];
+function vtoast(msg){ const cv = document.getElementById('cv'); if (!cv) return; const o = cv.querySelector('.vtoast'); if (o) o.remove();
+  const t = document.createElement('div'); t.className = 'vtoast'; t.textContent = msg; cv.appendChild(t); setTimeout(() => t.classList.add('out'), 1800); setTimeout(() => t.remove(), 2400); }
 function say(){
   sayAfter = false; hush();
-  if (!sayText()) return;
+  if (!sayText() || !hasVo()) return;
   const src = VOX(`v${pad(cur)}.mp3`);
   if (src && player) {
     const my = seq;
