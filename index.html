@@ -639,7 +639,7 @@ const IM = f => DRAW[NO].img[f];
 const VOX = f => ((DRAW[NO] || {})['vo_' + lang] || {})[f];
 function lastNo(){ let n = 0; try { n = +(localStorage.getItem('last') || 0); } catch(e) {}
   return CAT.some(c => c.no === n) ? n : (NO || CAT[0].no); }   // 앱에서 뺀 그림(예: No.2)을 기억하고 있으면 첫 그림으로 — 목록에 같은 그림이 두 번 뜨지 않게
-const isOpen = c => c.no === CAT[0].no || unlocked[c.no];
+const isOpen = c => true;   // 2026-11-24 작가 요청: 자물쇠 표시 없이 모든 그림 바로 열기 (예전: 첫 그림만 열림, 나머지는 광고 보고 열기)
 const PREP_ = () => L[lang].prep;
 const chevL = `<svg width="22" height="40" viewBox="0 0 22 40" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 3L4 20l14 17"/></svg>`;
 const chevR = `<svg width="22" height="40" viewBox="0 0 22 40" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3l14 17L4 37"/></svg>`;
