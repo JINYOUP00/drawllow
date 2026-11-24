@@ -416,6 +416,13 @@ button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}   /* �
 .edge:active{opacity:.95}
 .edge:disabled{opacity:0;pointer-events:none}
 .edge.nx.fin{color:var(--accent);opacity:.9}
+/* 2026-11-24 작가: 좌우 누름 칸 = 그림 칸 양옆 20%씩 (단계 막대 아래 ~ 색 판 위). 화살표는 평소 숨김 → 누르면 나타났다 서서히 사라짐. 마지막 '완성 ✓'은 계속 보임 */
+.edge{width:20%;top:var(--et,96px);height:var(--eh,60%);transform:none;opacity:1}
+.edge.pv{left:0}.edge.nx{right:0}
+.edge svg{opacity:0;transition:opacity .7s ease}
+.edge:active svg,.edge.flash svg{opacity:.95;transition:none}
+.edge.nx.fin svg{opacity:.9}
+.edge:active{opacity:1}
 .cv.peek .edge,.cv.zoomed .edge{opacity:0;pointer-events:none}
 .ctl{justify-content:center}
 .stack video.sv{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;margin:0;padding:0;border:0;max-width:none;visibility:hidden}
@@ -888,8 +895,8 @@ function tut(){
   ab.onclick = () => { if (!hasVo()) { if (autoSay) { autoSay = false; save(); autoUI(); } vtoast(lang === 'ko' ? '이 그림은 작가 목소리를 준비하고 있어요.' : 'The artist’s voice for this drawing is coming soon.'); return; }
     track('listen_toggle', {on: !autoSay, drawing_no: NO}); autoSay = !autoSay; save(); autoUI(); if (autoSay) say(); else hush(); };
   autoUI();
-  document.getElementById('prev').onclick = () => go(cur-1);
-  document.getElementById('next').onclick = () => { if (cur === N) { hush(); home(); } else go(cur+1); };
+  document.getElementById('prev').onclick = e => { edgeFlash(e.currentTarget); go(cur-1); };
+  document.getElementById('next').onclick = e => { edgeFlash(e.currentTarget); if (cur === N) { hush(); home(); } else go(cur+1); };
   const avb = document.getElementById('allv');
   // 2026-11-21 작가 요청: '처음부터' = 그림을 첫 화면(첫 붓질)으로. 자동재생 중이면 처음부터 다시 자동재생
   const rsb = document.getElementById('rst');
@@ -900,7 +907,8 @@ function tut(){
   const setFold = v => { cv.classList.toggle('folded', v); cfb.setAttribute('aria-label', v ? '색 판 올리기' : '색 판 내리기'); try { localStorage.setItem('cfold', v ? '1' : ''); } catch (e) {} };
   let fv = false; try { fv = localStorage.getItem('cfold') === '1'; } catch (e) {}
   setFold(fv);
-  cfb.onclick = () => setFold(!cv.classList.contains('folded'));
+  cfb.onclick = () => { setFold(!cv.classList.contains('folded')); placeEdges(); setTimeout(placeEdges, 450); };
+  requestAnimationFrame(placeEdges); setTimeout(placeEdges, 400);
   const hd = document.getElementById('hide');
   hd.onclick = () => { const on = cv.classList.toggle('bare'); hd.setAttribute('aria-pressed', on); };
   $s.querySelectorAll('[data-st]').forEach(b => b.onclick = () => go(stageFirst[+b.dataset.st]));
@@ -977,6 +985,12 @@ const MARGIN = 0.05;            // 좌우 여백 (화면 가로 폭 대비, 한�
 const TOP_UI = 110, BOT_UI = 210; // 위(제목·단계)·아래(설명·버튼)에 가려지는 높이
 const isPatch = () => D && D.fmt === 'seg';   // 컷 영상 그림
 // 물감이 있는 곳(content)이 위·아래 글자를 피해 가운데 오도록, 사방 여백을 두고 그림을 놓는다
+function placeEdges(){ const cv = document.getElementById('cv'), sg = document.getElementById('seg'); if (!cv || !sg) return;
+  const r = cv.getBoundingClientRect(), hd = cv.querySelector('.hdr'), top = Math.max(sg.getBoundingClientRect().bottom, hd ? hd.getBoundingClientRect().bottom : 0) - r.top + 8;   // 색 판을 접으면 단계 막대가 위로 숨음 → 제목 줄 아래부터
+  const cb = document.getElementById('cbar');
+  const low = cv.classList.contains('folded') || !cb ? r.bottom - 44 : cb.getBoundingClientRect().top;   // 색 판을 접으면 아래 ^ 단추 위까지
+  cv.style.setProperty('--et', top + 'px'); cv.style.setProperty('--eh', Math.max(80, low - r.top - top) + 'px'); }
+function edgeFlash(b){ if (!b) return; b.classList.add('flash'); clearTimeout(b._ft); b._ft = setTimeout(() => b.classList.remove('flash'), 180); }
 function layoutStack(){
   const cv = document.getElementById('cv'), st = cv && cv.querySelector('.stack');
   if (!st || !isPatch()) return;
@@ -1007,7 +1021,7 @@ function layoutStack(){
   const hx = (D.bg || '#ffffff').replace('#', ''), lum = (parseInt(hx.slice(0,2),16)*299 + parseInt(hx.slice(2,4),16)*587 + parseInt(hx.slice(4,6),16)*114) / 1000;
   cv.classList.toggle('lightbg', lum > 150);
 }
-if (typeof window !== 'undefined') window.addEventListener('resize', () => { if (view === 'tut') layoutStack(); });
+if (typeof window !== 'undefined') window.addEventListener('resize', () => { if (view === 'tut') { layoutStack(); placeEdges(); } });
 // 컷 영상 (최근 몇 개만 붙잡아 둔다 — 아이폰 메모리)
 const SEG_KEEP = 5, segCache = {}, segOrder = [];
 let segShown = null;
