@@ -7,7 +7,7 @@
 <title>:Drawllow</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content=":Drawllow">
-<meta name="theme-color" content="#1F2023">
+<meta name="theme-color" content="#FFFFFF">
 <!-- 2026-11-20 구글 애널리틱스 (Google 태그 GTM-5LK9G9TZ, 속성 '따라 그림', 스트림 '따라 그림 웹앱') -->
 <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-5LK9G9TZ"></script>
 <script>
@@ -542,6 +542,80 @@ body{padding:0!important;background:var(--phone);-webkit-text-size-adjust:100%}
 .home{padding-top:calc(20px + env(safe-area-inset-top))}.top{padding-top:calc(18px + env(safe-area-inset-top))}
 .phone{width:100%!important;max-width:none!important;height:100%!important;max-height:none!important;min-height:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;margin:0!important}
 @media (min-width:600px) and (min-height:600px){body{background:var(--page)}.wrap{display:flex;justify-content:center;align-items:center}.phone{width:430px!important;height:min(932px,100%)!important;border-radius:28px!important}}
+
+/* ══ 시안 C: 흰 바탕 · 살구 오렌지 · 푸른 회색 (2026-11-24) ══ */
+:root{
+  --page:#F1F3F5; --phone:#FFFFFF; --surface:#F1F3F5; --surface2:#E3E7EB; --ink:#22272C; --sub:#8A939C; --line:#E3E7EB;
+  --accent:#FF8A3D; --accent-deep:#E8732A; --on-accent:#FFFFFF; --hl:#FF8A3D;
+  color-scheme:light;
+}
+/* 처음 화면 */
+.home{padding-left:16px;padding-right:16px}
+.hbm,.hbl{color:var(--ink)}
+.homebar .appname{color:var(--accent)}
+.langs{background:var(--surface)}
+.langs button{color:var(--sub)}
+.langs button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(34,39,44,.12)}
+.home.ig .prep{background:var(--surface)}
+.prep .st{color:var(--accent)}
+.hl3{margin:-4px -16px -6px;padding:0 16px}
+.hl3 button{color:var(--sub)}
+.hl3 button.on{color:var(--ink);font-weight:600}
+.hl3 .ring{background:transparent}
+.hl3 .ring>span{background:var(--surface);border:0;color:var(--sub)}
+.hl3 .ring b{color:var(--sub)}
+.hl3 .ring .dd i{border-color:rgba(34,39,44,.25)}
+.hl3 button.on .ring{background:transparent}
+.hl3 button.on .ring>span{background:var(--accent)}
+.hl3 button.on .ring b{color:#fff}
+.hl3 button.on .ring .dd i{border-color:rgba(255,255,255,.7)}
+.hl3 button.on .ring .dd i.f{background:#fff;border-color:#fff}
+.hl3 .contb .ring{background:transparent;box-shadow:inset 0 0 0 2px var(--accent);padding:3px}
+.iggrid{margin:0;gap:6px}
+.iggrid .lock{border-radius:12px;background:var(--surface)}
+.iggrid .lock img{filter:none}
+.iggrid .lock::after{height:50%;background:linear-gradient(transparent,rgba(0,0,0,.45))}
+.iggrid .k{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.9);color:var(--ink);display:flex;align-items:center;justify-content:center;filter:none;right:6px;top:6px}
+.iggrid .k svg{width:12px;height:12px}
+/* 메뉴·안내 창 */
+.drp{background:#fff}
+.mi:active{background:var(--surface)}
+.drhow .hw{background:#fff}
+.hwl .hk{background:var(--surface)}
+.gvbox{background:#fff}
+/* 불러오기 */
+.ring .tr{stroke:rgba(34,39,44,.1)}
+/* 광고 띠 */
+.adbar{background:#fff;color:var(--ink);border-top:1px solid var(--line)}
+.adtag{background:var(--accent);color:#fff}
+.adic{background:var(--surface);color:var(--accent)}
+.adtx span{color:var(--sub)}
+.adcta{background:var(--ink);color:#fff}
+
+/* 따라 그리는 화면 — 위쪽 줄 간격 넉넉하게 */
+.hdr .brandbk{background:#fff;border:0;color:var(--accent);box-shadow:0 1px 6px rgba(0,0,0,.12)}
+.hdr{color:#fff}
+.hdr .ttl{font-weight:500;color:#fff}
+.seg{top:calc(70px + env(safe-area-inset-top))}
+.stl{top:calc(98px + env(safe-area-inset-top))}
+.stl span{font-size:13px;font-weight:600;letter-spacing:-.005em}
+.stl p{margin-top:9px;line-height:1.75}
+.cv .gt{height:190px;background:linear-gradient(rgba(0,0,0,.4),rgba(0,0,0,0))}
+/* 설명 자막: 은은한 그라데이션 위에 글씨만 */
+.cv .gb{background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.5))}
+.sub .note{font-weight:400;text-shadow:0 1px 8px rgba(0,0,0,.4)}
+/* 아래 판: 흰색 + 지금 붓 색은 오른쪽 위 작은 색 칸 */
+.cbar{background:#fff!important;color:var(--ink)!important;border-top:1px solid var(--line)}
+.cbar::after{content:"";position:absolute;right:16px;top:9px;width:24px;height:24px;border-radius:7px;background:var(--cc,#888);box-shadow:inset 0 0 0 1px rgba(0,0,0,.1)}
+.cbar #cbv{margin-right:34px;color:var(--sub)}
+.cbar .spx{opacity:1}
+.cbar .spx .szl{color:var(--sub)}
+.cbar ~ .ctl .pill,.cbar.light ~ .ctl .pill{background:var(--surface);border-color:transparent;color:var(--ink);-webkit-backdrop-filter:none;backdrop-filter:none}
+.cbar ~ .ctl #allv,.cbar ~ .ctl .pill.allv.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.cbar ~ .ctl .pill.auto.on,.cbar ~ .ctl #autobtn.on,.cbar ~ .ctl #autobtn[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.cbar.light ~ .ctl .pill.chip .dot{background:var(--ink)}
+.cv:not(.folded) .cfold,.cv:not(.folded) .cfold.light{color:var(--sub)}
+@media (min-width:600px) and (min-height:600px){body{background:var(--page)}}
 </style>
 
 <div class="wrap">
@@ -1120,7 +1194,7 @@ function draw(){
   // 지금 색: 아래 긴 막대(가로:세로 15:1) 위에 색 이름과 RGB 값
   const hx = (s.hex || '#888888').replace('#', ''), rgb = [0, 2, 4].map(i => parseInt(hx.slice(i, i + 2), 16));
   const cb = document.getElementById('cbar'), lum = (rgb[0]*299 + rgb[1]*587 + rgb[2]*114) / 1000;
-  cb.style.background = '#' + hx; cb.classList.toggle('light', lum > 150);
+  cb.style.background = '#' + hx; cb.style.setProperty('--cc', '#' + hx); cb.classList.toggle('light', lum > 150);
   const cfo = document.getElementById('cfold'); if (cfo) { cfo.style.setProperty('--cc', '#' + hx); cfo.classList.toggle('light', lum > 150); }
   document.getElementById('cbn').textContent = '';
   document.getElementById('cbv').innerHTML = `<span>RGB ${rgb.join(' ')}</span><span>#${hx.toUpperCase()}</span>`;   // 2026-11-20 작가 요청: RGB 아래 #색 코드
