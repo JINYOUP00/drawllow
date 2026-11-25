@@ -1537,8 +1537,18 @@ try { localStorage.setItem('cfold', ''); } catch(e) {} { const c = document.getE
 const SHIFT_UP = {4: 0.10};
 const _ls2 = layoutStack;
 layoutStack = function(){ _ls2.apply(this, arguments);
-  const k = D && (D.no || NO), f = SHIFT_UP[k]; if (!f) return;
-  const cv = document.getElementById('cv'), st = cv && cv.querySelector('.stack'); if (!st) return;
+  const cv = document.getElementById('cv'), st = cv && cv.querySelector('.stack'); if (!st || !D) return;
+  // 2026-11-25 작가: 원본 캔버스의 좌우 폭이 잘리지 않게 맞춘다 (화면 가로 = 캔버스 가로). 위아래는 바탕색으로 조금 남아도 됨.
+  // 새 디자인(themeA)의 '화면 가득'은 화면을 덮느라 양옆을 잘랐음 → 같은 '칠한 곳 가운데' 높이를 지키며 크기만 가로에 맞춤. 손풀기(D.fill)는 그대로 가득.
+  if (window.__FILL && !D.fill && !cv.closest('.rotor.land')) {
+    const cw = cv.clientWidth, ch = cv.clientHeight, s0 = parseFloat(st.style.width) / D.w, t0 = parseFloat(st.style.top);
+    if (s0 > 0 && isFinite(t0)) {
+      const fy = (ch / 2 - t0) / s0, s = cw / D.w;
+      Object.assign(st.style, {width: cw + 'px', height: D.h * s + 'px', left: '0px', top: ch / 2 - fy * s + 'px'});
+      if (!cv.style.background || cv.style.background.indexOf('var(') >= 0) cv.style.background = D.bg || '#fff';
+    }
+  }
+  const k = D.no || NO, f = SHIFT_UP[k]; if (!f) return;
   st.style.top = (parseFloat(st.style.top) || 0) - f * cv.clientHeight + 'px';
 };
 if (view === 'tut') layoutStack();
