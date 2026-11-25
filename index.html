@@ -1593,6 +1593,12 @@ home = function(){ const r = _home2.apply(this, arguments);
 if (!document.getElementById('rules3css')) { const s = document.createElement('style'); s.id = 'rules3css';
   s.textContent = '.rules3{margin:-6px 0 56px 2px;font-size:12.5px;line-height:1.45;color:#8a8a8a;font-weight:400;letter-spacing:-.005em}' +
     '.home.ig{padding-bottom:7px!important}';   /* 2026-11-25 작가: 아래 난이도 버튼 줄 밑 여백 반으로 (42 → 21) */ document.head.appendChild(s); }
+// 2026-11-25 작가: 아래 광고 띠(목업)는 임시로 작가의 Bulky Canvas 홈페이지로 연결 (한국어 bulkycanvas.com / 영어 en.bulkycanvas.com)
+(function(){ const a = document.querySelector('.adbar'); if (!a || a.dataset.link) return; a.dataset.link = '1';
+  a.style.cursor = 'pointer'; a.setAttribute('role', 'link');
+  a.addEventListener('click', () => { const u = (typeof lang !== 'undefined' && lang === 'ko') ? 'https://bulkycanvas.com/' : 'https://en.bulkycanvas.com/';
+    try { if (typeof track === 'function') track('ad_click', {to: u}); } catch (e) {}
+    window.open(u, '_blank', 'noopener'); }); })();
 if (view === 'home') home();
 })();
 </script>
