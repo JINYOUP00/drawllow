@@ -1526,3 +1526,17 @@ if (view === 'tut') setup();
 
 try { localStorage.setItem('cfold', ''); } catch(e) {} { const c = document.getElementById('cv'); if (c) c.classList.remove('folded'); }
 </script>
+<script>
+// 2026-11-25 작가: 그림마다 그리는 화면의 그림 위치를 조금씩 옮김 (화면 높이 비율, + = 위로). 새 디자인(themeA)이 놓은 뒤에 옮긴다.
+// 예: Stotting Deer(No.4) 10% 위로
+(function(){
+const SHIFT_UP = {4: 0.10};
+const _ls2 = layoutStack;
+layoutStack = function(){ _ls2.apply(this, arguments);
+  const k = D && (D.no || NO), f = SHIFT_UP[k]; if (!f) return;
+  const cv = document.getElementById('cv'), st = cv && cv.querySelector('.stack'); if (!st) return;
+  st.style.top = (parseFloat(st.style.top) || 0) - f * cv.clientHeight + 'px';
+};
+if (view === 'tut') layoutStack();
+})();
+</script>
