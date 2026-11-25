@@ -1241,3 +1241,156 @@ function draw(){
 document.addEventListener('keydown', e => { if (view!=='tut') return; if (e.key==='ArrowRight') go(cur+1); if (e.key==='ArrowLeft') go(cur-1); });
 home();
 </script>
+
+<!-- 2026-11-25 작가 확정 디자인: 처음 화면 = A 시안(Content Grid, 밝은 회색·큰 검은 글씨·검은 알약), 그림 화면 = 그림 가득 + 버튼·글을 위에 얹음.
+     원본 조각: 레이아웃시안/디자인언어/theme_common.css + theme_A.css + theme_A2.css, theme_common.js + theme_A.js -->
+<style id="themeA">@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600&display=swap');
+/* 2026-11-25 디자인 언어 시안 (작가 참고: Content / Library 화면) — 공통 */
+:root{--phone:#ECECEA!important;--page:#ECECEA!important;--surface:#fff!important;--surface2:#F4F4F2!important;--ink:#111!important;--sub:#8A8A86!important;--line:#DCDCD8!important;
+  --accent:#111!important;--on-accent:#fff!important;--acc2:#E8643A;
+  --f-en:"Inter Tight","Noto Sans KR",sans-serif!important;--f-body:"Inter Tight","Noto Sans KR",sans-serif!important;color-scheme:light}
+body,.phone{background:var(--phone)!important;color:var(--ink)!important}
+.home{background:var(--phone)!important;position:relative}
+/* 머리줄 */
+.homebar.hb3{display:flex!important;justify-content:space-between;align-items:center;margin:4px 0 0!important}
+.hb3 .appname{order:1;white-space:nowrap;font-family:var(--f-en)!important;font-size:38px!important;font-weight:500!important;letter-spacing:-.045em!important;color:#111!important;line-height:1}
+.hb3 .hbm{order:3;width:48px;height:48px;border-radius:50%;background:#E0E0DD!important;border:0;display:flex;align-items:center;justify-content:center;color:#111}
+.hb3 .langs{order:2;margin-left:auto!important;margin-right:8px!important;background:#E0E0DD!important;border:0!important;border-radius:24px!important;padding:3px!important;height:40px;display:flex;align-items:center}
+.hb3 .langs button{white-space:nowrap;color:#777!important;font-family:var(--f-en)!important;font-size:13px!important;padding:6px 10px!important;border-radius:20px!important;background:none!important}
+.hb3 .langs button.on{background:#fff!important;color:#111!important}
+/* 시작 전 준비 = 하얀 카드 + ↗ */
+.prep{background:#fff!important;border:0!important;border-radius:18px!important;color:#111!important;box-shadow:none!important;padding:14px 16px!important;display:flex!important;justify-content:space-between;align-items:center}
+.prep b{font-weight:500!important;font-size:15px!important;letter-spacing:-.02em;color:#111!important}
+.prep .st{color:#8A8A86!important;font-size:13px!important;font-weight:400!important}
+.prep .st{font-size:0!important}.prep .st::after{content:"↗";font-size:17px;color:#111}
+/* 광고 띠 */
+.adbar{background:#fff!important;color:#111!important;border-top:1px solid #DCDCD8!important}
+.adbar .adcta{background:#111!important;color:#fff!important}
+/* 그림 화면 공통 ───────────────── */
+.cv .gt,.cv .gb,.cv .cfold,.cv .stl{display:none!important}
+.cv::before,.cv::after{content:"";position:absolute;left:0;right:0;background:var(--phone);z-index:3;pointer-events:none}
+.cv::before{top:0;height:var(--topH,150px)}
+.cv::after{bottom:0;height:var(--botH,190px)}
+.cv .hdr,.cv .seg,.cv .sub,.cv .cbar,.cv .ctl{z-index:5!important}
+.cv .hdr{color:#111!important}
+.cv .hdr .brandbk{width:48px;height:48px;padding:0!important;justify-content:center;border-radius:50%!important;background:#E0E0DD!important;color:#111!important;box-shadow:none!important;border:0!important;order:3}
+.cv .hdr .brandbk .bn{display:none}
+.cv .hdr .brandbk svg{width:20px;height:20px}
+.cv .sub{left:20px!important;right:20px!important;align-items:flex-start!important;text-align:left!important}
+.cv .sub .note{color:#111!important;text-shadow:none!important;font-size:15.5px!important;line-height:1.55!important;font-weight:400!important;background:none!important;padding:0!important}
+.cv .cbar{background:none!important;color:#8A8A86!important;border:0!important;box-shadow:none!important;height:auto!important;padding:0!important;left:20px!important;right:20px!important;display:flex!important;justify-content:space-between!important;align-items:center!important;font-size:11.5px!important}
+.cv .cbar .spx{position:static!important;color:#8A8A86!important;font-size:11.5px!important;display:flex;align-items:center;gap:5px}
+.cv .cbar .spx .dot{background:var(--cc,#333)!important;width:12px!important;height:12px!important;border:0!important;order:-1}
+.cv .cbar #cbv{position:static!important;display:flex!important;flex-direction:row!important;gap:8px;color:#8A8A86!important;font-size:11.5px!important}
+.cv .cbar *{color:#8A8A86!important;text-shadow:none!important}
+.cv .edge{color:#fff!important}
+.cv.bare::before,.cv.bare::after{opacity:1}
+.cv .cbar::after,.cv .cbar::before{display:none!important}
+.cv .stack{border-radius:6px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.12)}
+/* A · Content Grid */
+.home .hl3{position:sticky!important;bottom:14px;margin:-64px -16px 0!important;flex:none;padding:0 12px!important;gap:8px!important;z-index:8;overflow-x:auto}
+.home .hl3 button{width:auto!important;height:50px;flex-direction:row!important;padding:0 20px!important;border-radius:25px!important;background:#fff!important;color:#111!important;font-size:15px!important;font-weight:500!important;gap:8px!important;font-family:var(--f-en)!important;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.home .hl3 button .ring{display:none!important}
+.home .hl3 button.on{background:#111!important;color:#fff!important}
+.home .hl3 button.off{display:none!important}
+.home .hl3 .contb{display:none!important}
+.home .hl3 .bdg{width:20px;height:20px;border-radius:50%;background:var(--acc2);color:#fff;font-size:11px;display:inline-flex;align-items:center;justify-content:center}
+.home .iggrid{grid-template-columns:1fr 1fr!important;gap:3px!important;margin:0 -13px!important;padding-bottom:80px}
+.home .iggrid .lock{border-radius:16px!important;aspect-ratio:auto!important;height:200px}
+.home .iggrid .lock::after,.home .iggrid .lock .t,.home .iggrid .lock .dn{display:none!important}
+.home .iggrid .lock img{height:100%!important;filter:none!important}
+.home .atx{height:200px;border:0;border-radius:16px;background:#fff;color:#111;padding:14px;display:flex;flex-direction:column;justify-content:space-between;text-align:left;cursor:pointer;font-family:var(--f-en)}
+.home .atx .am{display:flex;justify-content:space-between;font-size:11.5px;line-height:1.3;color:#8A8A86}
+.home .atx .am svg{width:14px;height:14px;color:#111}
+.home .atx .at{font-size:32px;font-weight:500;letter-spacing:-.045em;line-height:1}
+.home .atx .at.s{font-size:24px}
+/* 그림 화면 */
+.cv{--topH:132px;--botH:184px}
+.cv .hdr{top:calc(10px + env(safe-area-inset-top))!important;left:20px!important;right:16px!important;flex-wrap:wrap;align-items:flex-start!important}
+.cv .hdr .ttl{order:1;flex:1 1 0!important;text-align:left!important;margin:0!important;font-size:44px!important;font-weight:500!important;letter-spacing:-.045em;line-height:1.05!important;color:#111!important;font-family:var(--f-en)!important;padding-top:4px}
+.cv .hdr .count{order:4;flex:0 0 100%!important;border:0!important;padding:4px 0 0!important;color:#8A8A86!important;font-size:12.5px!important}
+.cv .hdr .count::before{content:"Stroke "}
+.cv .seg{top:calc(108px + env(safe-area-inset-top))!important;left:20px!important;right:20px!important}
+.cv .seg .sg{background:#DCDCD8!important;height:3px!important;border-radius:2px}
+.cv .seg .sg i{background:#111!important}
+.cv .sub{bottom:86px!important}
+.cv .cbar{bottom:172px!important;top:auto!important}
+.cv .ctl{left:16px!important;right:16px!important;bottom:22px!important}
+.cv .ctl .mid{gap:8px!important;justify-content:flex-start!important}
+.cv .ctl .mid>.pill{flex:none!important;width:50px!important;height:50px!important;border-radius:50%!important;background:#fff!important;color:#111!important;border:0!important;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.cv .ctl .mid>#allv{order:-1;width:auto!important;border-radius:25px!important;padding:0 22px!important;background:#111!important;color:#fff!important;margin-right:auto;gap:8px!important}
+.cv .ctl .mid>#allv svg{width:16px!important;height:16px!important}
+.cv .ctl .mid>#allv #allvtx{display:inline!important;font-family:var(--f-en);font-size:15px;font-weight:500}
+.cv .ctl .mid>#autobtn.on{background:#111!important;color:#fff!important}
+/* A2 · 처음 화면 A + 그림 화면 가득 (버튼·글은 그림 위에) */
+.cv::before,.cv::after{display:none!important}
+.cv .gt,.cv .gb{display:none!important}
+.cv .stack{border-radius:0!important;box-shadow:none!important}
+.cv .hdr .brandbk{background:rgba(255,255,255,.9)!important}
+.cv .hdr .ttl{color:#fff!important;text-shadow:0 1px 10px rgba(0,0,0,.35)}
+.cv .hdr .count{color:rgba(255,255,255,.85)!important;text-shadow:0 1px 8px rgba(0,0,0,.35)}
+.cv .seg .sg{background:rgba(255,255,255,.35)!important}
+.cv .seg .sg i{background:#fff!important}
+.cv .sub .note{color:#fff!important;text-shadow:0 1px 8px rgba(0,0,0,.55)!important}
+.cv .cbar *{color:rgba(255,255,255,.85)!important;text-shadow:0 1px 6px rgba(0,0,0,.4)!important}
+.cv .cbar .spx .dot{box-shadow:0 0 0 1.5px rgba(255,255,255,.85)}
+.cv .ctl .mid>.pill{background:rgba(255,255,255,.92)!important;box-shadow:0 4px 16px rgba(0,0,0,.18)!important}
+.cv .ctl .mid>#allv{background:#111!important;color:#fff!important}
+/* 바탕이 밝은 그림: 글씨를 검게 */
+.cv.lightbg .hdr .ttl,.cv.lightbg .hdr .count,.cv.lightbg .sub .note{color:#111!important;text-shadow:0 0 10px rgba(255,255,255,.85)!important}
+.cv.lightbg .cbar *{color:#555!important;text-shadow:0 0 6px rgba(255,255,255,.85)!important}
+.cv.lightbg .seg .sg{background:rgba(0,0,0,.12)!important}
+.cv.lightbg .seg .sg i{background:#111!important}
+.cv.lightbg .hdr .brandbk{background:#E6E6E3!important}
+</style>
+<script>window.__FILL=1;(function(){
+// 그림을 위 제목 칸과 아래 색 정보 줄 사이 띠 안에 다 보이게 맞춘다 (시안용)
+const _ls = layoutStack;
+layoutStack = function(){ _ls.apply(this, arguments);
+  const cv = document.getElementById('cv'), st = cv && cv.querySelector('.stack'), sg = document.getElementById('seg'), cb = document.getElementById('cbar');
+  if (!st || !sg || !cb || D.fill || cv.closest('.rotor.land')) return;
+  const W = D.w, H = D.h, r0 = cv.getBoundingClientRect();
+  const top = sg.getBoundingClientRect().bottom - r0.top + 16, bot = cb.getBoundingClientRect().top - r0.top - 14;
+  if (window.__FILL) {   // 화면 가득
+    const s = Math.max(cv.clientWidth / W, cv.clientHeight / H);   // 화면을 빈틈없이 덮음 (넘치는 양옆은 잘림)
+    Object.assign(st.style, {width: W*s + 'px', height: H*s + 'px', left: (cv.clientWidth - W*s)/2 + 'px', top: (cv.clientHeight - H*s)/2 + 'px'});
+    return; }
+  const s = Math.min(cv.clientWidth * 0.9 / W, (bot - top) / H);
+  Object.assign(st.style, {width: W*s + 'px', height: H*s + 'px', left: (cv.clientWidth - W*s)/2 + 'px', top: (top + bot)/2 - H*s/2 + 'px'});
+  cv.style.background = 'var(--phone)';
+};
+if (view === 'tut') layoutStack();
+})();
+(function(){
+const AR='<svg viewBox="0 0 24 24"><path d="M7 17L17 7M8 7h9v9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const lvName = n => ['Easy','Easy','Medium','Hard','Challenge'][(n||1)-1];
+function fixHome(){
+  const all = document.querySelector('.home .hl3 [data-lv="0"]');
+  if (all && !all.querySelector('.bdg')) { all.childNodes.forEach(n => { if (n.nodeType === 3) n.textContent = 'All'; }); all.insertAdjacentHTML('beforeend', `<span class="bdg">${CAT.length}</span>`); }
+  document.querySelectorAll('.home .hl3 [data-lv]:not([data-lv="0"])').forEach(b => { b.childNodes.forEach(n => { if (n.nodeType === 3 && n.textContent.trim()) n.textContent = lvName(+b.dataset.lv); }); });
+  const g = document.querySelector('.home .iggrid'); if (!g) return;
+  const hl = document.querySelector('.home .hl3'); if (hl) g.parentElement.appendChild(hl);   // 거르기 알약은 맨 아래에 붙어 있게
+  const tiles = [...g.querySelectorAll('.lock[data-no]')]; g.innerHTML = '';
+  tiles.forEach((t, i) => { const c = CAT.find(x => x.no == t.dataset.no) || {};
+    const nm = c.name_en || c.name || '';
+    const tx = document.createElement('button'); tx.type = 'button'; tx.className = 'atx';
+    if (window.__NUM) { const last = seenAny() ? lastNo() : 0, p = prog[c.no] || 1, cur = c.no === last && p > 1;
+      if (cur) tx.classList.add('cur');
+      tx.innerHTML = `<span class="am"><span>${lvName(c.level)}</span>${AR}</span><span class="an">${cur ? `${p}<small>/${c.count}</small>` : c.count}</span><span class="at2">${nm}</span><span class="am2">${cur ? 'Continue' : 'strokes'}</span>`;
+    } else
+    tx.innerHTML = `<span class="am"><span>${lvName(c.level)}<br>${c.count} strokes</span>${AR}</span><span class="at${nm.length > 12 ? ' s' : ''}">${nm.replace(/-/, '-<br>')}</span>`;
+    tx.onclick = () => t.click();
+    (i % 2 === 0 ? [tx, t] : [t, tx]).forEach(e => g.appendChild(e)); });
+}
+function fitTitle(){ const t = document.querySelector('.cv .hdr .ttl'); if (!t || window.__NUM) return;
+  const n = (t.textContent || '').length; t.style.setProperty('font-size', (n <= 10 ? 44 : n <= 16 ? 32 : 26) + 'px', 'important'); }
+function fixTut(){ fitTitle(); if (!window.__NUM) return;
+  const cv = document.getElementById('cv'), cnt = document.getElementById('cnt'); if (!cv || !cnt) return;
+  let b = cv.querySelector('.bigc'); if (!b) { b = document.createElement('div'); b.className = 'bigc'; cv.appendChild(b); }
+  const upd = () => { const m = (cnt.textContent || '').match(/(\d+)\s*\/\s*(\d+)/); if (m) b.innerHTML = `<b>${m[1]}</b><span>/ ${m[2]} strokes</span>`; };
+  upd(); new MutationObserver(upd).observe(cnt, {childList: true, characterData: true, subtree: true}); }
+const _tut = tut; tut = function(){ const r = _tut.apply(this, arguments); try { fixTut(); } catch(e) { console.error(e); } return r; };
+const _home = home; home = function(){ const r = _home.apply(this, arguments); try { fixHome(); } catch(e) { console.error(e); } return r; };
+if (view === 'home') fixHome();
+})();
+</script>
