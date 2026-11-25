@@ -1243,7 +1243,7 @@ home();
 </script>
 
 <!-- 2026-11-25 작가 확정 디자인: 처음 화면 = A 시안(Content Grid, 밝은 회색·큰 검은 글씨·검은 알약), 그림 화면 = 그림 가득 + 버튼·글을 위에 얹음.
-     원본 조각: 레이아웃시안/디자인언어/theme_common.css + theme_A.css + theme_A2.css, theme_common.js + theme_A.js -->
+     원본 조각: 레이아웃시안/디자인언어/theme_common.css + theme_A.css + theme_A2.css + theme_A3.css, theme_common.js + theme_A.js -->
 <style id="themeA">@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600&display=swap');
 /* 2026-11-25 디자인 언어 시안 (작가 참고: Content / Library 화면) — 공통 */
 :root{--phone:#ECECEA!important;--page:#ECECEA!important;--surface:#fff!important;--surface2:#F4F4F2!important;--ink:#111!important;--sub:#8A8A86!important;--line:#DCDCD8!important;
@@ -1347,6 +1347,34 @@ body,.phone{background:var(--phone)!important;color:var(--ink)!important}
 .cv .ctl{bottom:calc(22px + env(safe-area-inset-bottom))!important}
 /* 그림을 가운데로 밀면 생기는 빈자리와 그림 끝이 이어 보이게, 그림 가장자리를 살짝 흐리게 */
 .cv .stack{-webkit-mask-image:linear-gradient(to right,transparent,#000 4%,#000 96%,transparent),linear-gradient(to bottom,transparent,#000 4%,#000 96%,transparent);-webkit-mask-composite:source-in;mask-image:linear-gradient(to right,transparent,#000 4%,#000 96%,transparent),linear-gradient(to bottom,transparent,#000 4%,#000 96%,transparent);mask-composite:intersect}
+/* A3 · 하단 미니멀 시안: 색·브러시 정보 맨 아래, 아이콘만, 반투명 판 */
+.cv::after{display:block!important;content:"";position:absolute;left:0;right:0;bottom:0;height:calc(178px + env(safe-area-inset-bottom));z-index:4;pointer-events:none;
+  background:rgba(18,18,20,.30);-webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);
+  -webkit-mask-image:linear-gradient(transparent,#000 34px);mask-image:linear-gradient(transparent,#000 34px)}
+.cv.lightbg::after{background:rgba(255,255,255,.38)}
+.cv.bare::after{height:calc(96px + env(safe-area-inset-bottom))}
+/* 설명 글 */
+.cv .sub{bottom:calc(104px + env(safe-area-inset-bottom))!important}
+.cv .sub .note{font-size:15px!important;font-weight:400!important}
+/* 버튼: 바탕 없이 아이콘만, 4칸 고르게 */
+.cv .ctl{bottom:calc(36px + env(safe-area-inset-bottom))!important;left:24px!important;right:24px!important}
+.cv .ctl .mid{justify-content:space-between!important;gap:0!important}
+.cv .ctl .mid>.pill,.cv .ctl .mid>#allv{order:0!important;flex:1 1 0!important;width:auto!important;height:48px!important;padding:0!important;margin:0!important;border-radius:24px!important;
+  background:transparent!important;box-shadow:none!important;border:0!important;color:#fff!important}
+.cv .ctl .mid>#rst{order:1!important}.cv .ctl .mid>#allv{order:2!important}.cv .ctl .mid>#hide{order:3!important}.cv .ctl .mid>#autobtn{order:4!important}
+.cv .ctl .mid>#allv #allvtx{display:none!important}
+.cv .ctl .mid>.pill svg{width:22px!important;height:22px!important}
+.cv .ctl .mid>#allv svg{width:26px!important;height:26px!important}
+.cv .ctl .mid>#hide{font-size:17px!important;font-weight:400!important}
+.cv .ctl .mid>#allv.on,.cv .ctl .mid>#autobtn.on{background:rgba(255,255,255,.18)!important}
+.cv.lightbg .ctl .mid>.pill{color:#111!important}
+.cv.lightbg .ctl .mid>#allv.on,.cv.lightbg .ctl .mid>#autobtn.on{background:rgba(0,0,0,.08)!important}
+/* 색·브러시 정보: 크기 그대로, 맨 아래 한 줄 */
+.cv .cbar{bottom:calc(12px + env(safe-area-inset-bottom))!important;left:24px!important;right:24px!important}
+.cv.lightbg .ctl .mid>#allv,.cv.lightbg .ctl .mid>#autobtn,.cv.lightbg .ctl .mid>#rst,.cv.lightbg .ctl .mid>#hide{color:#111!important}
+/* 2026-11-25 작가: 위 단계 막대를 맨 위로 */
+.cv .seg{top:calc(8px + env(safe-area-inset-top))!important}
+.cv .hdr{top:calc(24px + env(safe-area-inset-top))!important}
 </style>
 <script>window.__FILL=1;(function(){
 // 그림을 위 제목 칸과 아래 색 정보 줄 사이 띠 안에 다 보이게 맞춘다 (시안용)
