@@ -1648,6 +1648,7 @@ select.cm-in{appearance:auto}
 .cm-big .cm-top{color:#fff}.cm-big .cm-ib{background:rgba(255,255,255,.14);color:#fff}
 .cm-cap{color:#fff;padding:12px 18px calc(18px + env(safe-area-inset-bottom));font-size:14px;line-height:1.5}
 .cm-cap small{display:block;color:rgba(255,255,255,.6);font-size:12px;margin-bottom:4px}
+.drp .mdiv{height:1px;background:var(--line);margin:8px 22px}
 .cm-test{font-size:11px;color:#E8643A;font-family:var(--f-en);margin-left:6px}
 </style>
 <script id="community-js">
@@ -1890,6 +1891,13 @@ openMenu = function(){ const r = _open.apply(this, arguments);
     d.querySelector('#m_up').onclick = () => { shut(); needLogin(uploadSheet); };
     d.querySelector('#m_gal').onclick = () => { shut(); gallery(); };
     d.querySelector('#m_acc').onclick = () => { shut(); needLogin(accountSheet); };
+    // 2026-11-25 작가: 메뉴 순서 정리, 이어 보기·사용법은 메뉴에서 뺌
+    //   그림 보기(모든 그림·모두의 그림·내 그림 올리기) | 준비(브러시 설정·사용법) | 나(계정·언어·인스타그램)
+    const nav = d.querySelector('.drp'), q = id => d.querySelector('#' + id), lang_ = d.querySelector('.mrow'), foot = d.querySelector('.drf');
+    const cont = q('m_cont'); if (cont) cont.remove();
+    const how = q('m_how'); if (how) how.remove();   // 2026-11-25 작가: 사용법도 메뉴에서 뺌
+    const sep = () => { const h = document.createElement('div'); h.className = 'mdiv'; return h; };
+    [q('m_all'), q('m_gal'), q('m_up'), sep(), q('m_prep'), sep(), q('m_acc'), lang_, q('m_ig')].forEach(el => { if (el) nav.insertBefore(el, foot); });
   } catch (e) {}
   return r; };
 // 로그인 상태를 미리 알아 두기 (메뉴 글씨용) — 서버가 준비됐고 예전에 로그인한 적이 있을 때만
