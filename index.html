@@ -1243,7 +1243,7 @@ home();
 </script>
 
 <!-- 2026-11-25 작가 확정 디자인: 처음 화면 = A 시안(Content Grid, 밝은 회색·큰 검은 글씨·검은 알약), 그림 화면 = 그림 가득 + 버튼·글을 위에 얹음.
-     원본 조각: 레이아웃시안/디자인언어/theme_common.css + theme_A.css + theme_A2.css + theme_A3.css, theme_common.js + theme_A.js -->
+     원본 조각: 레이아웃시안/디자인언어/theme_common.css + theme_A.css + theme_A2.css + theme_A3.css + theme_A4.css, theme_common.js + theme_A.js + theme_A4.js(숨기기 2번) -->
 <style id="themeA">@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600&display=swap');
 /* 2026-11-25 디자인 언어 시안 (작가 참고: Content / Library 화면) — 공통 */
 :root{--phone:#ECECEA!important;--page:#ECECEA!important;--surface:#fff!important;--surface2:#F4F4F2!important;--ink:#111!important;--sub:#8A8A86!important;--line:#DCDCD8!important;
@@ -1375,8 +1375,45 @@ body,.phone{background:var(--phone)!important;color:var(--ink)!important}
 /* 2026-11-25 작가: 위 단계 막대를 맨 위로 */
 .cv .seg{top:calc(8px + env(safe-area-inset-top))!important}
 .cv .hdr{top:calc(24px + env(safe-area-inset-top))!important}
+/* A4 · 2026-11-25 작가: 단계 막대 음영 없애기 / 아래 판은 글 있을 때만 그 높이까지 (오르락내리락, 흐림 없이 딱 끊기) */
+.cv .seg .sg{background:none!important;box-shadow:none!important;border:0!important;height:12px!important;padding:4.5px 0!important}
+.cv .seg .sg::before{background:rgba(255,255,255,.35)!important;box-shadow:none!important}
+.cv .seg .sg i{box-shadow:none!important}
+.cv.lightbg .seg .sg::before{background:rgba(0,0,0,.13)!important}
+.cv::after{height:var(--panelH,calc(92px + env(safe-area-inset-bottom)))!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+  -webkit-mask-image:none!important;mask-image:none!important;background:rgba(16,16,18,.42)!important;transition:height .38s cubic-bezier(.3,.7,.2,1),opacity .3s}
+.cv.lightbg::after{background:rgba(255,255,255,.55)!important}
+.cv .sub{transition:opacity .25s}
+/* 인터페이스 숨기기 */
+.cv .hdr,.cv .seg,.cv .sub,.cv .cbar,.cv .ctl,.cv .edge{transition:opacity .3s,transform .38s cubic-bezier(.3,.7,.2,1)}
+.cv.uioff .hdr,.cv.uioff .seg{opacity:0!important;transform:translateY(-24px)!important;pointer-events:none!important}
+.cv.uioff .sub,.cv.uioff .cbar,.cv.uioff .ctl{opacity:0!important;transform:translateY(24px)!important;pointer-events:none!important}
+.cv.uioff .edge{opacity:0!important;pointer-events:none!important}
+.cv.uioff::after{opacity:0}
+.uih{position:absolute;z-index:7;border:0;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;transition:bottom .38s cubic-bezier(.3,.7,.2,1),opacity .3s,transform .3s;-webkit-tap-highlight-color:transparent}
+.cv.lightbg .uih{color:#111}
+.uih svg{width:20px;height:20px;transition:transform .35s}
+.cv.uioff .uih svg{transform:rotate(180deg)}
+/* 시안 1: 오른쪽, 판 위 모서리에 작은 반투명 동그라미 */
+.uih.v1{right:14px;bottom:calc(var(--panelH,92px) + 10px);width:36px;height:36px;border-radius:50%;background:rgba(16,16,18,.42)}
+.cv.lightbg .uih.v1{background:rgba(255,255,255,.6)}
+.cv.uioff .uih.v1{bottom:calc(14px + env(safe-area-inset-bottom))}
+/* 시안 2: 가운데, 판 윗변에 붙은 탭 */
+.uih.v2{left:50%;margin-left:-28px;width:56px;height:22px;border-radius:12px 12px 0 0;bottom:var(--panelH,92px);background:rgba(16,16,18,.42)}
+.cv.lightbg .uih.v2{background:rgba(255,255,255,.55)}
+.uih.v2 svg{width:18px;height:18px}
+.cv.uioff .uih.v2{bottom:0;border-radius:12px 12px 0 0}
+/* 시안 3: 위, 돌아가기 버튼 왼쪽에 '크게 보기' 아이콘 (숨긴 뒤엔 그림을 톡 누르면 돌아옴) */
+.uih.v3{top:calc(26px + env(safe-area-inset-top));right:72px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.9);color:#111!important}
+.cv.lightbg .uih.v3{background:#E6E6E3}
+.uih.v3 svg{width:18px;height:18px}
+.cv.uioff .uih.v3{opacity:.35;right:14px;transform:scale(.8)}
+.cv.uioff .uih.v3 svg{transform:none}
+/* 2026-11-25 작가: 완성 샷(그림 꾹 눌러 완성 그림 보기)일 때는 제목만 남기고 모두 숨김 */
+.cv.peek .seg,.cv.peek .sub,.cv.peek .cbar,.cv.peek .ctl,.cv.peek .uih,.cv.peek .peektag,.cv.peek .hdr .brandbk,.cv.peek .hdr .count{opacity:0!important;pointer-events:none!important}
+.cv.peek::after{opacity:0}
 </style>
-<script>window.__FILL=1;(function(){
+<script>window.__FILL=1;window.__UIV=2;(function(){
 // 그림을 위 제목 칸과 아래 색 정보 줄 사이 띠 안에 다 보이게 맞춘다 (시안용)
 // 완성 그림(final.jpg)에서 바탕과 다른 곳(칠한 곳)의 범위를 재서 가운데를 구한다 (그림마다 한 번, 저장)
 const FOC = {};
@@ -1450,6 +1487,41 @@ function fixTut(){ fitTitle(); if (!window.__NUM) return;
 const _tut = tut; tut = function(){ const r = _tut.apply(this, arguments); try { fixTut(); } catch(e) { console.error(e); } return r; };
 const _home = home; home = function(){ const r = _home.apply(this, arguments); try { fixHome(); } catch(e) { console.error(e); } return r; };
 if (view === 'home') fixHome();
+})();
+(function(){
+// 아래 판 높이: 설명 글이 있으면 글 위까지, 없으면 버튼·정보 줄만
+function panel(){
+  const cv = document.getElementById('cv'); if (!cv) return;
+  const sub = document.getElementById('subw'), note = document.getElementById('note');
+  const has = note && note.textContent.trim() && !cv.classList.contains('bare');
+  const base = cv.querySelector('.ctl') ? cv.clientHeight - cv.querySelector('.ctl').getBoundingClientRect().top + cv.getBoundingClientRect().top + 14 : 92;
+  let h = base;
+  if (has && sub) { const r = sub.getBoundingClientRect(), r0 = cv.getBoundingClientRect(); h = Math.max(base, r0.bottom - r.top + 16); }
+  cv.style.setProperty('--panelH', Math.round(h) + 'px');
+  if (sub) sub.style.opacity = has ? 1 : 0;
+}
+const ICON = {
+  1: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
+  2: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
+  3: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>'};
+function addHide(){
+  const cv = document.getElementById('cv'); if (!cv || cv.querySelector('.uih')) return;
+  const v = window.__UIV || 1, b = document.createElement('button');
+  b.type = 'button'; b.className = 'uih v' + v; b.setAttribute('aria-label', '화면 버튼 숨기기'); b.innerHTML = ICON[v];
+  b.onclick = e => { e.stopPropagation(); cv.classList.toggle('uioff'); };
+  cv.appendChild(b);
+  if (v === 3) cv.addEventListener('click', e => { if (cv.classList.contains('uioff') && !e.target.closest('.uih')) { cv.classList.remove('uioff'); e.stopPropagation(); } }, true);
+}
+function setup(){
+  const cv = document.getElementById('cv'); if (!cv) return;
+  addHide(); panel();
+  const note = document.getElementById('note');
+  if (note) new MutationObserver(() => requestAnimationFrame(panel)).observe(note, {childList: true, characterData: true, subtree: true});
+  new MutationObserver(() => requestAnimationFrame(panel)).observe(cv, {attributes: true, attributeFilter: ['class']});
+}
+const _tut2 = tut; tut = function(){ const r = _tut2.apply(this, arguments); try { setup(); } catch(e) { console.error(e); } return r; };
+window.addEventListener('resize', () => { if (view === 'tut') panel(); });
+if (view === 'tut') setup();
 })();
 
 try { localStorage.setItem('cfold', ''); } catch(e) {} { const c = document.getElementById('cv'); if (c) c.classList.remove('folded'); }
