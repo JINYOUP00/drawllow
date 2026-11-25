@@ -1432,6 +1432,8 @@ body,.phone{background:var(--phone)!important;color:var(--ink)!important}
 .cv.lightbg .edge.nx.fin::after{color:#111;text-shadow:0 0 6px rgba(255,255,255,.8)}
 /* 8: 안내 영상 — 재생 막대 없이 (누르면 멈춤/재생) */
 .gvid video{cursor:pointer}
+/* 2026-11-25 작가: 되감기 누르면 이전 붓질이 눌림 → 보이지 않는 좌우 넘기기 칸을 아래 판(버튼·설명) 위에서 끝나게 */
+.cv .edge{height:auto!important;bottom:calc(var(--panelH,92px) + 6px)!important}
 </style>
 <script>window.__FILL=1;window.__UIV=2;(function(){
 // 그림을 위 제목 칸과 아래 색 정보 줄 사이 띠 안에 다 보이게 맞춘다 (시안용)
