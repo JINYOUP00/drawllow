@@ -1345,9 +1345,33 @@ body,.phone{background:var(--phone)!important;color:var(--ink)!important}
 /* 2026-11-25 폰에서 아래 버튼 안 보임: 예전에 '판 접기'를 해 둔 폰은 접힌 채(.folded)로 남음 → 새 디자인은 접기 없음, 늘 펼침 */
 .cv.folded .hdr,.cv.folded .seg,.cv.folded .sub,.cv.folded .cbar,.cv.folded .ctl{transform:none!important;opacity:1!important;pointer-events:auto!important}
 .cv .ctl{bottom:calc(22px + env(safe-area-inset-bottom))!important}
+/* 그림을 가운데로 밀면 생기는 빈자리와 그림 끝이 이어 보이게, 그림 가장자리를 살짝 흐리게 */
+.cv .stack{-webkit-mask-image:linear-gradient(to right,transparent,#000 4%,#000 96%,transparent),linear-gradient(to bottom,transparent,#000 4%,#000 96%,transparent);-webkit-mask-composite:source-in;mask-image:linear-gradient(to right,transparent,#000 4%,#000 96%,transparent),linear-gradient(to bottom,transparent,#000 4%,#000 96%,transparent);mask-composite:intersect}
 </style>
 <script>window.__FILL=1;(function(){
 // 그림을 위 제목 칸과 아래 색 정보 줄 사이 띠 안에 다 보이게 맞춘다 (시안용)
+// 완성 그림(final.jpg)에서 바탕과 다른 곳(칠한 곳)의 범위를 재서 가운데를 구한다 (그림마다 한 번, 저장)
+const FOC = {};
+function focusOf(d){
+  const key = d.no || NO; if (FOC[key] !== undefined) return FOC[key];
+  FOC[key] = null;
+  try { const src = typeof IM === 'function' ? IM('final.jpg') : ''; if (!src) return null;
+    const im = new Image(); im.onload = () => { try {
+      const w = 120, h = Math.round(w * im.height / im.width), c = document.createElement('canvas'); c.width = w; c.height = h;
+      const x = c.getContext('2d'); x.drawImage(im, 0, 0, w, h); const p = x.getImageData(0, 0, w, h).data;
+      const px = (i, j) => { const k = (j*w + i)*4; return [p[k], p[k+1], p[k+2]]; };
+      const edge = []; for (let i = 0; i < w; i++) { edge.push(px(i, 0), px(i, h-1)); } for (let j = 0; j < h; j++) { edge.push(px(0, j), px(w-1, j)); }
+      const med = k => edge.map(e => e[k]).sort((a, b) => a - b)[edge.length >> 1], bg = [med(0), med(1), med(2)];
+      const xs = [], ys = [];
+      for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) { const q = px(i, j); if (Math.max(Math.abs(q[0]-bg[0]), Math.abs(q[1]-bg[1]), Math.abs(q[2]-bg[2])) > 40) { xs.push(i); ys.push(j); } }
+      if (xs.length < 30) return;
+      xs.sort((a, b) => a - b); ys.sort((a, b) => a - b);
+      const pc = (a, f) => a[Math.min(a.length - 1, Math.floor(a.length * f))];
+      FOC[key] = {x: (pc(xs, .02) + pc(xs, .98)) / 2 / w, y: (pc(ys, .02) + pc(ys, .98)) / 2 / h, bg: `rgb(${bg.join(',')})`};
+      if (view === 'tut' && (D.no || NO) === key) layoutStack();
+    } catch(e) {} }; im.src = src; } catch(e) {}
+  return null;
+}
 const _ls = layoutStack;
 layoutStack = function(){ _ls.apply(this, arguments);
   const cv = document.getElementById('cv'), st = cv && cv.querySelector('.stack'), sg = document.getElementById('seg'), cb = document.getElementById('cbar');
@@ -1355,8 +1379,11 @@ layoutStack = function(){ _ls.apply(this, arguments);
   const W = D.w, H = D.h, r0 = cv.getBoundingClientRect();
   const top = sg.getBoundingClientRect().bottom - r0.top + 16, bot = cb.getBoundingClientRect().top - r0.top - 14;
   if (window.__FILL) {   // 화면 가득
-    const s = Math.max(cv.clientWidth / W, cv.clientHeight / H);   // 화면을 빈틈없이 덮음 (넘치는 양옆은 잘림)
-    Object.assign(st.style, {width: W*s + 'px', height: H*s + 'px', left: (cv.clientWidth - W*s)/2 + 'px', top: (cv.clientHeight - H*s)/2 + 'px'});
+    const s = Math.max(cv.clientWidth / W, cv.clientHeight / H);   // 화면을 덮는 크기 (넘치는 양옆은 잘림)
+    // 2026-11-25 작가: 그림이 한쪽으로 치우쳐 보임 → 캔버스 가운데가 아니라 '실제로 칠한 부분'의 가운데를 화면 가운데에
+    const F = focusOf(D), fx = F ? F.x * W : W/2, fy = F ? F.y * H : H/2;
+    Object.assign(st.style, {width: W*s + 'px', height: H*s + 'px', left: cv.clientWidth/2 - fx*s + 'px', top: cv.clientHeight/2 - fy*s + 'px'});
+    if (F && F.bg) cv.style.background = F.bg;   // 밀려서 생긴 빈자리는 캔버스 바탕색으로
     return; }
   const s = Math.min(cv.clientWidth * 0.9 / W, (bot - top) / H);
   Object.assign(st.style, {width: W*s + 'px', height: H*s + 'px', left: (cv.clientWidth - W*s)/2 + 'px', top: (top + bot)/2 - H*s/2 + 'px'});
